@@ -1,0 +1,54 @@
+services:
+  agent:
+    build:
+      context: ./get-vrs-report-pcaps
+    image: tsl-downloader
+    volumes:
+      - ./get-vrs-report-pcaps/downloads:/app/downloads
+    environment:
+      USER_ID: ${USER_ID}
+      SUBSCRIBER: ${SUBSCRIBER}
+      PASSWORD: ${PASSWORD}
+      TSL_ID: ${TSL_ID}
+      PORTAL_URL: ${PORTAL_URL}
+    command: >
+      --user-id $USER_ID --subscriber $SUBSCRIBER --password $PASSWORD --tsl-id $TSL_ID --download-dir downloads
+
+  automate_regex:
+    build: .
+    volumes:
+      - ./get-vrs-report-pcaps/downloads:/app/get-vrs-report-pcaps/downloads
+      - ./report:/app/report
+      - ./prompts:/app/prompts
+    environment:
+      AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY_ID}
+      AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY}
+      TSL_ID: ${TSL_ID}
+    command: >
+      python src/automate_regex.py --tsl_id $TSL_ID
+
+  extract_filter:
+    build: .
+    volumes:
+      - ./report:/app/report
+    environment:
+      TSL_ID: ${TSL_ID}
+    command: >
+      python src/extract_filter.py --tsl_id $TSL_ID
+
+  run_regex:
+    build: .
+    volumes:
+      - ./pcaps:/app/pcaps
+      - ./report:/app/report
+    environment:
+      TSL_ID: ${TSL_ID}
+    command: >
+      python src/run_regex_on_pcaps.py --tsl_id $TSL_ID
+
+  generate_dashboard:
+    build: .
+    volumes:
+      - ./report:/app/report
+    command: >
+      python src/generate_dashboard.py

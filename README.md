@@ -1,5 +1,7 @@
 # Pcap Testing with AI Regex
 
+**Author:** Amit Verma | [LinkedIn](https://www.linkedin.com/in/amyvrm)
+
 This open source tool automates the process of downloading vulnerability reports and PCAPs, generating AI-based regex filters, extracting those filters, and running regex analysis on PCAPs. The workflow is modular, containerized, and designed to provide feedback to LLM trainers for improving model performance on vulnerability analysis and regex generation tasks.
 
 ## Overview
